@@ -33,11 +33,11 @@ public class TurretLimelightLockTest extends LinearOpMode {
     private static final double STOPPER_OPEN = 0.6;
     private static final double DRIVE_SPEED = 0.9;
     private static final double STOPPER_CLOSED = 0.3;
-    private static final double KP = 0.018;
-    private static final double MIN_POWER = 0.08;
-    private static final double MAX_POWER = 0.08;
-    private static final double DEADZONE = 0.20;
-
+    private double filteredTx = 0;
+    private static final double KP = 0.01;
+    private static final double MIN_POWER = 0.05;
+    private static final double MAX_POWER = 0.20;
+    private static final double DEADZONE = 2.0;
     @Override
     public void runOpMode() {
 
@@ -98,11 +98,11 @@ public class TurretLimelightLockTest extends LinearOpMode {
             // HOODER SERVO CONTROL
             // =========================
             if (gamepad1.a) {
-                servos.setHudder(0.5);
+                servos.setHudder(1.0);
             }
 
             if (gamepad1.b) {
-                servos.setHudder(0.0);
+                servos.setHudder(0.95);
             }
 
             // =========================
@@ -133,13 +133,16 @@ public class TurretLimelightLockTest extends LinearOpMode {
 
                 double tx = result.getTx();
 
+                // Smooth TX
+                filteredTx = filteredTx * 0.95 + tx * 0.05;
+
                 double turretPower = 0;
 
-                if (Math.abs(tx) > DEADZONE) {
+                // Larger lock zone to prevent hunting
+                if (Math.abs(filteredTx) > DEADZONE) {
 
-                    turretPower = -tx * KP;
+                    turretPower = -filteredTx * KP;
 
-                    // overcome friction
                     if (Math.abs(turretPower) < MIN_POWER) {
                         turretPower = Math.signum(turretPower) * MIN_POWER;
                     }
@@ -153,7 +156,8 @@ public class TurretLimelightLockTest extends LinearOpMode {
                 turret.setPower(turretPower);
 
                 telemetry.addData("Tag Visible", true);
-                telemetry.addData("TX", tx);
+                telemetry.addData("TX Raw", tx);
+                telemetry.addData("TX Filtered", filteredTx);
                 telemetry.addData("Turret Power", turretPower);
 
             } else {
