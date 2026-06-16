@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp(name = "Servo Test", group = "Test")
 public class ServoTest extends LinearOpMode {
 
-    private Servo Sservo;
+    private Servo hservo;
 
     @Override
     public void runOpMode() {
 
-        Sservo = hardwareMap.get(Servo.class, "Sservo");
+        hservo = hardwareMap.get(Servo.class, "hservo");
 
 
         telemetry.addLine("Servo Test Ready");
@@ -26,18 +26,18 @@ public class ServoTest extends LinearOpMode {
         while (opModeIsActive()) {
 
             if (gamepad1.a) {
-                Sservo.setPosition(0.0);
+                hservo.setPosition(0.0);
             }
 
             if (gamepad1.b) {
-                Sservo.setPosition(0.3);
+                hservo.setPosition(0.3);
             }
 
             if (gamepad1.y) {
-                Sservo.setPosition(1.0);
+                hservo.setPosition(1.0);
             }
 
-            telemetry.addData("Servo Position", Sservo.getPosition());
+            telemetry.addData("Servo Position", hservo.getPosition());
             telemetry.update();
         }
     }

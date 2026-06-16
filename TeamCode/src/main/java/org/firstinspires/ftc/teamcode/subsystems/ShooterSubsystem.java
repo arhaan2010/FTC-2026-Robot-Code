@@ -9,8 +9,8 @@ public class ShooterSubsystem {
     private final DcMotorEx shooterL;
     private final DcMotorEx shooterR;
 
-    private static final double TARGET_VELOCITY = 1800;
-    private static final double SPINUP_THRESHOLD = 1750;
+    private static final double FAST_VELOCITY = 1680;
+    private static final double SLOW_VELOCITY = 1570;
 
     public ShooterSubsystem(HardwareMap hardwareMap) {
 
@@ -29,44 +29,49 @@ public class ShooterSubsystem {
         shooterL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Tuned values based on your testing
-        shooterL.setVelocityPIDFCoefficients(10, 0, 0, 14.8);
-        shooterR.setVelocityPIDFCoefficients(10, 0, 0, 14.8);
+        // FTC SDK built-in velocity controller
+        shooterL.setVelocityPIDFCoefficients(16, 0, 2, 15);
+        shooterR.setVelocityPIDFCoefficients(16, 0, 2, 15);
     }
 
     public void shootFast() {
 
-        double avgVelocity = getAverageVelocity();
+        shooterL.setVelocity(FAST_VELOCITY);
+        shooterR.setVelocity(FAST_VELOCITY);
+    }
 
-        if (avgVelocity < SPINUP_THRESHOLD) {
+    public void shootSlow() {
 
-            // Full power acceleration
-            shooterL.setPower(1.0);
-            shooterR.setPower(1.0);
+        shooterL.setVelocity(SLOW_VELOCITY);
+        shooterR.setVelocity(SLOW_VELOCITY);
+    }
 
-        } else {
+    public void shootVelocity(double velocity) {
 
-            // Velocity hold
-            shooterL.setVelocity(TARGET_VELOCITY);
-            shooterR.setVelocity(TARGET_VELOCITY);
-        }
+        shooterL.setVelocity(velocity);
+        shooterR.setVelocity(velocity);
     }
 
     public void reverse() {
 
-        shooterL.setPower(-1.0);
-        shooterR.setPower(-1.0);
+        shooterL.setPower(-0.5);
+        shooterR.setPower(-0.5);
     }
 
     public void stop() {
 
-        shooterL.setPower(0);
-        shooterR.setPower(0);
+        shooterL.setVelocity(0);
+        shooterR.setVelocity(0);
     }
 
-    public boolean readyToShoot() {
+    public boolean readyForFastShot() {
 
-        return Math.abs(getAverageVelocity() - TARGET_VELOCITY) < 30;
+        return Math.abs(getAverageVelocity() - FAST_VELOCITY) < 50;
+    }
+
+    public boolean readyForSlowShot() {
+
+        return Math.abs(getAverageVelocity() - SLOW_VELOCITY) < 50;
     }
 
     public double getAverageVelocity() {
@@ -81,13 +86,5 @@ public class ShooterSubsystem {
 
     public double getRightVelocity() {
         return shooterR.getVelocity();
-    }
-
-    public int getLeftPosition() {
-        return shooterL.getCurrentPosition();
-    }
-
-    public int getRightPosition() {
-        return shooterR.getCurrentPosition();
     }
 }

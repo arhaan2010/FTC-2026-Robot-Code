@@ -110,36 +110,22 @@ public class MainTeleOp extends LinearOpMode {
             // RGB INDICATOR
             // =========================
 
-            long currentTime = System.currentTimeMillis();
-
-            if (currentTime - lastBlinkTime > 250) {
-
-                blinkState = !blinkState;
-                lastBlinkTime = currentTime;
-            }
-
             if (Math.abs(intake.getPower()) > 0.1) {
 
-                // Replace with your actual intake velocity method
                 if (Math.abs(intake.getVelocity()) < 100) {
 
-                    if (blinkState) {
-                        rgb.red();
-                    } else {
-                        rgb.off();
-                    }
+                    // Intake stalled / ball jammed
+                    rgb.red();
 
                 } else {
 
-                    if (blinkState) {
-                        rgb.blue();
-                    } else {
-                        rgb.off();
-                    }
+                    // Intake running normally
+                    rgb.blue();
                 }
 
             } else {
 
+                // Intake stopped
                 rgb.off();
             }
 
@@ -420,8 +406,6 @@ public class MainTeleOp extends LinearOpMode {
                     "%.1f", shooter.getRightVelocity());
 
 
-            telemetry.addData("Ready To Shoot",
-                    shooter.readyToShoot());
 
             telemetry.addLine("");
 

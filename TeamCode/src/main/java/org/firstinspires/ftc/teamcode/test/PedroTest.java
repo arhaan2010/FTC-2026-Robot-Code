@@ -1,10 +1,7 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
-import com.pedropathing.follower.Follower;
-import com.pedropathing.ftc.FollowerBuilder;
 
 @Autonomous(name = "Pedro Test")
 public class PedroTest extends LinearOpMode {

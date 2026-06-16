@@ -16,10 +16,10 @@ public class TurretSubsystem {
     private static final double MAX_ANGLE = 120.0;
 
     // PIDF
-    private double kP = 0.009;
+    private double kP = 0.006;
     private double kI = 0.0000;
-    private double kD = 0.0002;
-    private double kF = 0.05;
+    private double kD = 0.0001;
+    private double kF = 0.03;
 
     private double integral = 0;
     private double lastError = 0;
@@ -65,6 +65,14 @@ public class TurretSubsystem {
         double error =
                 targetTicks - currentTicks;
 
+        // Deadband to prevent oscillation
+        if (Math.abs(error) < 5) {
+            turret.setPower(0);
+            integral = 0;
+            lastError = error;
+            return;
+        }
+
         double dt = pidTimer.seconds();
         pidTimer.reset();
 
@@ -83,7 +91,7 @@ public class TurretSubsystem {
                         + (kI * integral)
                         + (kD * derivative);
 
-        if (Math.abs(error) > 5) {
+        if (Math.abs(error) > 20) {
             power += Math.signum(error) * kF;
         }
 

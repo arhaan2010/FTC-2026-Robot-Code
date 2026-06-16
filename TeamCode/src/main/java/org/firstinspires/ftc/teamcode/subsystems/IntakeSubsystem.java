@@ -16,11 +16,11 @@ public class IntakeSubsystem {
     }
 
     public void intakeIn() {
-        intake.setPower(0.6);
+        intake.setPower(0.5);
     }
 
     public void intakeOut() {
-        intake.setPower(-0.9);
+        intake.setPower(-0.74);
     }
 
     public void stop() {
